@@ -4,6 +4,8 @@ import entity.*
 import entity.abstracts.FullPayment
 import interfaces.ShowOrder
 import java.lang.Thread.sleep
+import java.time.LocalDate
+import java.time.LocalTime
 
 class Menu : FullPayment(), ShowOrder {
 
@@ -13,15 +15,16 @@ class Menu : FullPayment(), ShowOrder {
     suspend fun showMenu(user: User, userList: MutableList<User>) {
         do {
             println()
-            println("1. Sign in")
-            println("2. Sign up")
-            println("3. Exit")
+            val listOfSettings = Settings.values().toList()
+            listOfSettings.forEachIndexed{ index, settings ->
+                println("${index + 1}. ${settings.option}")
+            }
 
             when (validateInput("Int", "Select an option: ")) {
                 1 -> {
 
                     println()
-                    println("Sign in")
+                    println("You choose Sign in")
                     println()
                     print("User: ")
                     val userSignIn = readlnOrNull() ?: ""
@@ -243,7 +246,7 @@ class Menu : FullPayment(), ShowOrder {
 
                     do {
                         println()
-                        println("Sign up")
+                        println("You choose Sign up")
                         println()
                         print("User: ")
                         val userSignUp = readlnOrNull() ?: ""
@@ -286,15 +289,21 @@ class Menu : FullPayment(), ShowOrder {
         if (user.getOrder().isEmpty()) {
             println("Your order is empty, please select a dish")
         } else {
+            println("\t***********************************")
+            println("\t\t\t\tWELCOME TO")
+            println("\t\t\tFIRST CHOICE RESTAURANT")
+            println("\t\t\t\t${LocalDate.now()}")
+            println("\t\t\t\t${LocalTime.now().hour}:${LocalTime.now().minute}:${LocalTime.now().second}")
+            println("\t\t\tUser - ${user.getUser()}")
+            println()
+            println("\t\tDishes: ")
             user.getOrder().forEach { dish ->
-                println(
-                    """${dish.value.name}
-                |Price: ${dish.value.price}
-                |Quantity: ${dish.value.quantity}
-            """.trimMargin()
-                )
+                println("\t\t\tName: ${dish.value.name}")
+                println("\t\t\tPrice: ${dish.value.price}")
+                println("\t\t\tQuantity: ${dish.value.quantity}")
                 println()
             }
+            println("\t***********************************")
             sleep(3_000L)
             println()
             println("Calculate of the total of your order: ")
