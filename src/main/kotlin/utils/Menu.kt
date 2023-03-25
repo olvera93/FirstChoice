@@ -1,12 +1,11 @@
 package utils
 
-import entity.Category
-import entity.FoodMenu
-import entity.User
+import entity.*
 import entity.abstracts.FullPayment
-import entity.foodList
 import interfaces.ShowOrder
 import java.lang.Thread.sleep
+import java.time.LocalDate
+import java.time.LocalTime
 
 class Menu : FullPayment(), ShowOrder {
 
@@ -16,15 +15,16 @@ class Menu : FullPayment(), ShowOrder {
     suspend fun showMenu(user: User, userList: MutableList<User>) {
         do {
             println()
-            println("1. Sign in")
-            println("2. Sign up")
-            println("3. Exit")
+            val listOfSettings = Settings.values().toList()
+            listOfSettings.forEachIndexed { index, settings ->
+                println("${index + 1}. ${settings.option}")
+            }
 
             when (validateInput("Int", "Select an option: ")) {
                 1 -> {
 
                     println()
-                    println("Sign in")
+                    println("You choose Sign in")
                     println()
                     print("User: ")
                     val userSignIn = readlnOrNull() ?: ""
@@ -37,7 +37,26 @@ class Menu : FullPayment(), ShowOrder {
                         do {
                             println()
                             val listOfCategory = Category.values().toList()
-                            println("Menu options")
+                            println(
+                                "    _____       _          \n" +
+                                        "   |     |     | |         \n" +
+                                        "   |     | __ _| |_ ___    \n" +
+                                        "   |     |/ _` | __/ _ \\   \n" +
+                                        "   |_____| (_| | ||  __/   \n" +
+                                        "         \\__,_|\\__\\___|   \n" +
+                                        "          ___________      \n" +
+                                        "        //          \\\\   \n" +
+                                        "       //            \\\\ \n" +
+                                        "      //______________\\\\\n" +
+                                        "      |                |\n" +
+                                        "      |                |\n" +
+                                        "      |      MENU      |\n" +
+                                        "      |                |\n" +
+                                        "      |                |\n" +
+                                        "      |                |\n" +
+                                        "      |________________|\n"
+                            )
+
                             listOfCategory.forEachIndexed { index, category ->
                                 println("${index + 1}. ${category.foodCategory}")
                             }
@@ -53,7 +72,7 @@ class Menu : FullPayment(), ShowOrder {
                                         val (key, value) = entry
                                         println(
                                             """${index + 1}. ${value.name}
-                                            |Price: ${value.price}
+                                            |Price: $${value.price}
                                             |Description: ${value.description}
                                         """.trimMargin()
                                         )
@@ -85,7 +104,7 @@ class Menu : FullPayment(), ShowOrder {
 
                                         println(
                                             """${index + 1}. ${value.name}
-                                            |Price: ${value.price}
+                                            |Price: $${value.price}
                                             |Description: ${value.description}
                                         """.trimMargin()
                                         )
@@ -117,7 +136,7 @@ class Menu : FullPayment(), ShowOrder {
                                         val (key, value) = entry
                                         println(
                                             """${index + 1}. ${value.name}
-                                            |Price: ${value.price}
+                                            |Price: $${value.price}
                                             |Description: ${value.description}
                                         """.trimMargin()
                                         )
@@ -149,7 +168,7 @@ class Menu : FullPayment(), ShowOrder {
                                         val (key, value) = entry
                                         println(
                                             """${index + 1}. ${value.name}
-                                            |Price: ${value.price}
+                                            |Price: $${value.price}
                                             |Description: ${value.description}
                                         """.trimMargin()
                                         )
@@ -179,8 +198,33 @@ class Menu : FullPayment(), ShowOrder {
                                     runCatching {
                                         println()
                                         showOrder(user)
-                                    }.onFailure {
-                                        println("Your order is empty")
+                                        if (totalBill(user) == 0.0) {
+                                            throw Exception("You can't pay an empty order")
+                                        }
+                                        println()
+                                        sleep(3_000L)
+                                        var continuePay = validateInput(
+                                            "String",
+                                            "Do you want to pay your order? (Y/N): "
+                                        )
+
+                                        if (continuePay == "Y" || continuePay == "y") {
+                                            sleep(2_000L)
+                                            println()
+                                            println("Which payment method do you want to use?")
+                                            val listMethodPayment = MethodPayment.values().toList()
+                                            listMethodPayment.forEachIndexed { index, methodPayment ->
+                                                println("${index + 1}. ${methodPayment.method}")
+                                            }
+
+                                            payBill(
+                                                user,
+                                                listMethodPayment[validateInput(
+                                                    "Int",
+                                                    "Select a payment method: "
+                                                ) as Int - 1]
+                                            )
+                                        }
                                     }
                                 }
 
@@ -190,8 +234,6 @@ class Menu : FullPayment(), ShowOrder {
                                     println()
                                 }
                             }
-
-
                         } while (!exit)
 
                     } else {
@@ -204,7 +246,7 @@ class Menu : FullPayment(), ShowOrder {
 
                     do {
                         println()
-                        println("Sign up")
+                        println("You choose Sign up")
                         println()
                         print("User: ")
                         val userSignUp = readlnOrNull() ?: ""
@@ -247,31 +289,121 @@ class Menu : FullPayment(), ShowOrder {
         if (user.getOrder().isEmpty()) {
             println("Your order is empty, please select a dish")
         } else {
+            println("\t***********************************")
+            println("\t\t\t\tWELCOME TO")
+            println("\t\t\tFIRST CHOICE RESTAURANT")
+            println("\t\t\t\t${LocalDate.now()}")
+            println("\t\t\t\t${LocalTime.now().hour}:${LocalTime.now().minute}:${LocalTime.now().second}")
+            println("\t\t\tUser - ${user.getUser()}")
+            println()
+            println("\t\tDishes: ")
             user.getOrder().forEach { dish ->
-                println(
-                    """${dish.value.name}
-                |Price: ${dish.value.price}
-                |Quantity: ${dish.value.quantity}
-            """.trimMargin()
-                )
+                println("\t\t\tName: ${dish.value.name}")
+                println("\t\t\tPrice: $${dish.value.price}")
+                println("\t\t\tQuantity: ${dish.value.quantity}")
                 println()
             }
+            println("\t***********************************")
             sleep(3_000L)
             println()
             println("Calculate of the total of your order: ")
-            println("Total: ${fullPayment(user)}")
+            println("Total: ${totalBill(user)}")
         }
 
 
     }
 
-    override fun fullPayment(user: User): Double {
+    override fun totalBill(user: User): Double {
         var total = 0.0
         user.getOrder().forEach { dish ->
             total += dish.value.price * dish.value.quantity
         }
         return total
-
     }
 
+    override fun payBill(user: User, listMethodPayment: MethodPayment) {
+
+        val creditCard = CreditCard()
+
+        when (listMethodPayment) {
+            MethodPayment.CASH -> {
+                println()
+                sleep(3_000L)
+
+                var cashCorrect = false
+                lateinit var paymentCash: Any
+                do {
+                    println()
+                    paymentCash = validateInput("Int", "Enter the amount of cash: ")
+                    if (paymentCash.toString().toInt() >= totalBill(user)) {
+                        cashCorrect = true
+                    } else {
+                        println()
+                        println("The amount of cash is not enough")
+                        println()
+                    }
+                } while (!cashCorrect)
+
+                println()
+                println("Your payment is being processed")
+                creditCard.paymentCash(paymentCash.toString().toDouble(), totalBill(user))
+                sleep(3_000L)
+                println()
+                println("Your change is: ${paymentCash.toString().toDouble() - totalBill(user)}")
+                println()
+                println("**********THANKS FOR YOUR PURCHASE**********")
+                println()
+
+
+                exit = true
+            }
+
+            MethodPayment.CREDIT_CARD -> {
+
+                var passCorrect = false
+                do {
+                    println()
+                    print("Enter your credit card password:")
+                    val creditCardNumber = readlnOrNull() ?: ""
+                    if (creditCard.creditCardPassword(creditCardNumber)) {
+                        passCorrect = true
+                    }
+                } while (!passCorrect)
+
+                println()
+                println("Your payment is being processed")
+                sleep(3_000L)
+                creditCard.payment(totalBill(user))
+                println()
+                println("***Your payment was successful***")
+                println()
+                println("**********THANKS FOR YOUR PURCHASE**********")
+                println()
+                exit = true
+            }
+
+            MethodPayment.PAYPAL -> {
+                var passCorrect = false
+                do {
+                    println()
+                    print("Enter your credit card password:")
+                    val creditCardNumber = readlnOrNull() ?: ""
+                    if (creditCard.creditCardPassword(creditCardNumber)) {
+                        passCorrect = true
+                    }
+                } while (!passCorrect)
+
+                println()
+                println("Your payment is being processed")
+                sleep(3_000L)
+                creditCard.payment(totalBill(user))
+                println()
+                println("***Your payment was successful***")
+                println()
+                println("**********THANKS FOR YOUR PURCHASE**********")
+                println()
+                exit = true
+            }
+        }
+    }
 }
