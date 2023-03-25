@@ -16,7 +16,7 @@ class Menu : FullPayment(), ShowOrder {
         do {
             println()
             val listOfSettings = Settings.values().toList()
-            listOfSettings.forEachIndexed{ index, settings ->
+            listOfSettings.forEachIndexed { index, settings ->
                 println("${index + 1}. ${settings.option}")
             }
 
@@ -72,7 +72,7 @@ class Menu : FullPayment(), ShowOrder {
                                         val (key, value) = entry
                                         println(
                                             """${index + 1}. ${value.name}
-                                            |Price: ${value.price}
+                                            |Price: $${value.price}
                                             |Description: ${value.description}
                                         """.trimMargin()
                                         )
@@ -104,7 +104,7 @@ class Menu : FullPayment(), ShowOrder {
 
                                         println(
                                             """${index + 1}. ${value.name}
-                                            |Price: ${value.price}
+                                            |Price: $${value.price}
                                             |Description: ${value.description}
                                         """.trimMargin()
                                         )
@@ -136,7 +136,7 @@ class Menu : FullPayment(), ShowOrder {
                                         val (key, value) = entry
                                         println(
                                             """${index + 1}. ${value.name}
-                                            |Price: ${value.price}
+                                            |Price: $${value.price}
                                             |Description: ${value.description}
                                         """.trimMargin()
                                         )
@@ -168,7 +168,7 @@ class Menu : FullPayment(), ShowOrder {
                                         val (key, value) = entry
                                         println(
                                             """${index + 1}. ${value.name}
-                                            |Price: ${value.price}
+                                            |Price: $${value.price}
                                             |Description: ${value.description}
                                         """.trimMargin()
                                         )
@@ -299,7 +299,7 @@ class Menu : FullPayment(), ShowOrder {
             println("\t\tDishes: ")
             user.getOrder().forEach { dish ->
                 println("\t\t\tName: ${dish.value.name}")
-                println("\t\t\tPrice: ${dish.value.price}")
+                println("\t\t\tPrice: $${dish.value.price}")
                 println("\t\t\tQuantity: ${dish.value.quantity}")
                 println()
             }
@@ -329,23 +329,32 @@ class Menu : FullPayment(), ShowOrder {
             MethodPayment.CASH -> {
                 println()
                 sleep(3_000L)
+
+                var cashCorrect = false
+                lateinit var paymentCash: Any
                 do {
-                    val paymentCash = validateInput("Int", "Enter the amount of cash: ")
-                    if (creditCard.paymentCash(paymentCash as Double, totalBill(user))) {
-                        println()
-                        println("Your payment is being processed")
-                        sleep(3_000L)
-                        println()
-                        println("Thanks for your purchase")
-                        println("Your change is: ${paymentCash.toString().toInt() - totalBill(user)}")
-                        println()
+                    println()
+                    paymentCash = validateInput("Int", "Enter the amount of cash: ")
+                    if (paymentCash.toString().toInt() >= totalBill(user)) {
+                        cashCorrect = true
                     } else {
                         println()
                         println("The amount of cash is not enough")
                         println()
                     }
+                } while (!cashCorrect)
 
-                } while (paymentCash.toString().toInt() < totalBill(user))
+                println()
+                println("Your payment is being processed")
+                creditCard.paymentCash(paymentCash.toString().toDouble(), totalBill(user))
+                sleep(3_000L)
+                println()
+                println("Your change is: ${paymentCash.toString().toDouble() - totalBill(user)}")
+                println()
+                println("**********THANKS FOR YOUR PURCHASE**********")
+                println()
+
+
                 exit = true
             }
 
@@ -354,7 +363,7 @@ class Menu : FullPayment(), ShowOrder {
                 var passCorrect = false
                 do {
                     println()
-                    print("Enter your credit card number:")
+                    print("Enter your credit card password:")
                     val creditCardNumber = readlnOrNull() ?: ""
                     if (creditCard.creditCardPassword(creditCardNumber)) {
                         passCorrect = true
@@ -366,7 +375,9 @@ class Menu : FullPayment(), ShowOrder {
                 sleep(3_000L)
                 creditCard.payment(totalBill(user))
                 println()
-                println("Thanks for your purchase")
+                println("***Your payment was successful***")
+                println()
+                println("**********THANKS FOR YOUR PURCHASE**********")
                 println()
                 exit = true
             }
@@ -375,7 +386,7 @@ class Menu : FullPayment(), ShowOrder {
                 var passCorrect = false
                 do {
                     println()
-                    print("Enter your credit card number:")
+                    print("Enter your credit card password:")
                     val creditCardNumber = readlnOrNull() ?: ""
                     if (creditCard.creditCardPassword(creditCardNumber)) {
                         passCorrect = true
@@ -387,7 +398,9 @@ class Menu : FullPayment(), ShowOrder {
                 sleep(3_000L)
                 creditCard.payment(totalBill(user))
                 println()
-                println("Thanks for your purchase")
+                println("***Your payment was successful***")
+                println()
+                println("**********THANKS FOR YOUR PURCHASE**********")
                 println()
                 exit = true
             }

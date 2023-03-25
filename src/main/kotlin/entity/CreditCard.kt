@@ -28,6 +28,7 @@ class CreditCard {
         return validCreditCardPassword(creditCardPassword)
     }
 
+
     open fun payment(amount: Double): Boolean {
         return if (credit > amount) {
             this.credit -= amount
