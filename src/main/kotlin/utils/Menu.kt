@@ -1,10 +1,7 @@
 package utils
 
-import entity.Category
-import entity.FoodMenu
-import entity.User
+import entity.*
 import entity.abstracts.FullPayment
-import entity.foodList
 import interfaces.ShowOrder
 import java.lang.Thread.sleep
 
@@ -37,7 +34,26 @@ class Menu : FullPayment(), ShowOrder {
                         do {
                             println()
                             val listOfCategory = Category.values().toList()
-                            println("Menu options")
+                            println(
+                                "    _____       _          \n" +
+                                        "   |     |     | |         \n" +
+                                        "   |     | __ _| |_ ___    \n" +
+                                        "   |     |/ _` | __/ _ \\   \n" +
+                                        "   |_____| (_| | ||  __/   \n" +
+                                        "         \\__,_|\\__\\___|   \n" +
+                                        "          ___________      \n" +
+                                        "        //          \\\\   \n" +
+                                        "       //            \\\\ \n" +
+                                        "      //______________\\\\\n" +
+                                        "      |                |\n" +
+                                        "      |                |\n" +
+                                        "      |      MENU      |\n" +
+                                        "      |                |\n" +
+                                        "      |                |\n" +
+                                        "      |                |\n" +
+                                        "      |________________|\n"
+                            )
+
                             listOfCategory.forEachIndexed { index, category ->
                                 println("${index + 1}. ${category.foodCategory}")
                             }
@@ -179,6 +195,20 @@ class Menu : FullPayment(), ShowOrder {
                                     runCatching {
                                         println()
                                         showOrder(user)
+                                        println()
+                                        sleep(3_000L)
+                                        val listMethodPayment = MethodPayment.values().toList()
+                                        listMethodPayment.forEachIndexed { index, methodPayment ->
+                                            println("${index + 1}. ${methodPayment.method}")
+                                        }
+                                        payBill(
+                                            user,
+                                            listMethodPayment[validateInput(
+                                                "Int",
+                                                "Select a payment method: "
+                                            ) as Int - 1]
+                                        )
+
                                     }.onFailure {
                                         println("Your order is empty")
                                     }
@@ -259,19 +289,65 @@ class Menu : FullPayment(), ShowOrder {
             sleep(3_000L)
             println()
             println("Calculate of the total of your order: ")
-            println("Total: ${fullPayment(user)}")
+            println("Total: ${totalBill(user)}")
         }
 
 
     }
 
-    override fun fullPayment(user: User): Double {
+    override fun totalBill(user: User): Double {
         var total = 0.0
         user.getOrder().forEach { dish ->
             total += dish.value.price * dish.value.quantity
         }
         return total
+    }
 
+    override fun payBill(user: User, listMethodPayment: MethodPayment): Double {
+
+        val creditCard = CreditCard()
+
+        when (listMethodPayment) {
+            MethodPayment.CASH -> {
+                println("Your order is being prepared")
+                sleep(3_000L)
+                println()
+                println("Your order is ready")
+                println()
+                println("Thanks for your purchase")
+                println()
+            }
+
+            MethodPayment.CREDIT_CARD -> {
+                println("Your order is being prepared")
+                sleep(3_000L)
+                println()
+                if (creditCard.payment(totalBill(user))) {
+                    println("Your order is ready")
+                    println()
+                    println("Thanks for your purchase")
+                    println("You have ${creditCard.credit} in your credit card}")
+                    println()
+                } else {
+                    println("Your order is not ready")
+                    println()
+                    println("Thanks for your purchase")
+                    println()
+                }
+                println()
+                println("Thanks for your purchase")
+                println()
+            }
+
+            else -> {
+                println()
+                println("This payment method is not available yet")
+                println()
+            }
+        }
+
+
+        return 0.0
     }
 
 }
