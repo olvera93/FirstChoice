@@ -20,6 +20,16 @@ fun validateInput(expected: String, inputMessage: String): Any {
                     return value.toInt()
                 }
 
+                "Float" -> {
+                    typeInput = "Float"
+                    return value.toFloat()
+                }
+
+                "Boolean" -> {
+                    typeInput = "Boolean"
+                    return value.toBoolean()
+                }
+
                 else -> {
                     println("Wrong of type")
                 }

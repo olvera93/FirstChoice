@@ -195,22 +195,33 @@ class Menu : FullPayment(), ShowOrder {
                                     runCatching {
                                         println()
                                         showOrder(user)
+                                        if (totalBill(user) == 0.0) {
+                                            throw Exception("You can't pay an empty order")
+                                        }
                                         println()
                                         sleep(3_000L)
-                                        val listMethodPayment = MethodPayment.values().toList()
-                                        listMethodPayment.forEachIndexed { index, methodPayment ->
-                                            println("${index + 1}. ${methodPayment.method}")
-                                        }
-                                        payBill(
-                                            user,
-                                            listMethodPayment[validateInput(
-                                                "Int",
-                                                "Select a payment method: "
-                                            ) as Int - 1]
+                                        var continuePay = validateInput(
+                                            "String",
+                                            "Do you want to pay your order? (Y/N): "
                                         )
 
-                                    }.onFailure {
-                                        println("Your order is empty")
+                                        if (continuePay == "Y" || continuePay == "y") {
+                                            sleep(2_000L)
+                                            println()
+                                            println("Which payment method do you want to use?")
+                                            val listMethodPayment = MethodPayment.values().toList()
+                                            listMethodPayment.forEachIndexed { index, methodPayment ->
+                                                println("${index + 1}. ${methodPayment.method}")
+                                            }
+
+                                            payBill(
+                                                user,
+                                                listMethodPayment[validateInput(
+                                                    "Int",
+                                                    "Select a payment method: "
+                                                ) as Int - 1]
+                                            )
+                                        }
                                     }
                                 }
 
@@ -220,8 +231,6 @@ class Menu : FullPayment(), ShowOrder {
                                     println()
                                 }
                             }
-
-
                         } while (!exit)
 
                     } else {
@@ -303,51 +312,76 @@ class Menu : FullPayment(), ShowOrder {
         return total
     }
 
-    override fun payBill(user: User, listMethodPayment: MethodPayment): Double {
+    override fun payBill(user: User, listMethodPayment: MethodPayment) {
 
         val creditCard = CreditCard()
 
         when (listMethodPayment) {
             MethodPayment.CASH -> {
-                println("Your order is being prepared")
+                println()
                 sleep(3_000L)
-                println()
-                println("Your order is ready")
-                println()
-                println("Thanks for your purchase")
-                println()
+                do {
+                    val paymentCash = validateInput("Int", "Enter the amount of cash: ")
+                    if (creditCard.paymentCash(paymentCash as Double, totalBill(user))) {
+                        println()
+                        println("Your payment is being processed")
+                        sleep(3_000L)
+                        println()
+                        println("Thanks for your purchase")
+                        println("Your change is: ${paymentCash.toString().toInt() - totalBill(user)}")
+                        println()
+                    } else {
+                        println()
+                        println("The amount of cash is not enough")
+                        println()
+                    }
+
+                } while (paymentCash.toString().toInt() < totalBill(user))
+                exit = true
             }
 
             MethodPayment.CREDIT_CARD -> {
-                println("Your order is being prepared")
-                sleep(3_000L)
+
+                var passCorrect = false
+                do {
+                    println()
+                    print("Enter your credit card number:")
+                    val creditCardNumber = readlnOrNull() ?: ""
+                    if (creditCard.creditCardPassword(creditCardNumber)) {
+                        passCorrect = true
+                    }
+                } while (!passCorrect)
+
                 println()
-                if (creditCard.payment(totalBill(user))) {
-                    println("Your order is ready")
-                    println()
-                    println("Thanks for your purchase")
-                    println("You have ${creditCard.credit} in your credit card}")
-                    println()
-                } else {
-                    println("Your order is not ready")
-                    println()
-                    println("Thanks for your purchase")
-                    println()
-                }
+                println("Your payment is being processed")
+                sleep(3_000L)
+                creditCard.payment(totalBill(user))
                 println()
                 println("Thanks for your purchase")
                 println()
+                exit = true
             }
 
-            else -> {
+            MethodPayment.PAYPAL -> {
+                var passCorrect = false
+                do {
+                    println()
+                    print("Enter your credit card number:")
+                    val creditCardNumber = readlnOrNull() ?: ""
+                    if (creditCard.creditCardPassword(creditCardNumber)) {
+                        passCorrect = true
+                    }
+                } while (!passCorrect)
+
                 println()
-                println("This payment method is not available yet")
+                println("Your payment is being processed")
+                sleep(3_000L)
+                creditCard.payment(totalBill(user))
                 println()
+                println("Thanks for your purchase")
+                println()
+                exit = true
             }
         }
-
-
-        return 0.0
     }
-
 }

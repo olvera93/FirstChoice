@@ -7,6 +7,6 @@ abstract class FullPayment {
 
     abstract fun totalBill(user: User): Double
 
-    abstract fun payBill(user: User, listMethodPayment: MethodPayment): Double
+    abstract fun payBill(user: User, listMethodPayment: MethodPayment)
 
 }
