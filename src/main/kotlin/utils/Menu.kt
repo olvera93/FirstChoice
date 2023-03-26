@@ -16,9 +16,19 @@ class Menu : FullPayment(), ShowOrder {
         do {
             println()
             val listOfSettings = Settings.values().toList()
+
+            println("+".repeat(60))
+            println("+              WELCOME TO FIRST CHOICE RESTAURANT            +")
+            println("+                     AUTHOR Olvera, Gonzalo                 +")
+            println("+           https://github.com/olvera93/FirstChoice          +")
+            println("+".repeat(60))
+
+            println()
+            println("                        OPTIONS                             ")
             listOfSettings.forEachIndexed { index, settings ->
-                println("${index + 1}. ${settings.option}")
+                println("                      ${index + 1}. ${settings.option}                            ")
             }
+
 
             when (validateInput("Int", "Select an option: ")) {
                 1 -> {
@@ -56,11 +66,16 @@ class Menu : FullPayment(), ShowOrder {
                                         "      |                |\n" +
                                         "      |________________|\n"
                             )
-
+                            println()
+                            println("=".repeat(60))
+                            println("                        OPTIONS                             ")
                             listOfCategory.forEachIndexed { index, category ->
-                                println("${index + 1}. ${category.foodCategory}")
+                                println("                      ${index + 1}. ${category.foodCategory}")
+
+
                             }
-                            println("5. Show my order")
+                            println("                      5. Show my order")
+                            println("=".repeat(60))
 
                             println()
 
@@ -68,16 +83,20 @@ class Menu : FullPayment(), ShowOrder {
                                 1 -> {
                                     println()
                                     dishes = foodList.filter { it.value.category == Category.STARTERS }
+                                    println("+".repeat(60))
+                                    println("                        STARTERS                             ")
+                                    println()
                                     dishes.toList().forEachIndexed { index, entry ->
                                         val (key, value) = entry
                                         println(
-                                            """${index + 1}. ${value.name}
-                                            |Price: $${value.price}
-                                            |Description: ${value.description}
+                                            """               ${index + 1}. ${value.name}
+                                            |                      Price: $${value.price}
+                                            |                      Description: ${value.description}
                                         """.trimMargin()
                                         )
                                         println()
                                     }
+                                    println("+".repeat(60))
                                     when (val option = validateInput("Int", "Select a dish: ")) {
                                         in 1..dishes.size -> {
                                             val dish = dishes.values.toList()[option as Int - 1]
@@ -99,17 +118,21 @@ class Menu : FullPayment(), ShowOrder {
                                 2 -> {
                                     println()
                                     dishes = foodList.filter { it.value.category == Category.MAIN_COURSES }
+                                    println("+".repeat(60))
+                                    println("                        MAIN_COURSES                             ")
+                                    println()
                                     dishes.toList().forEachIndexed { index, entry ->
                                         val (key, value) = entry
 
                                         println(
-                                            """${index + 1}. ${value.name}
-                                            |Price: $${value.price}
-                                            |Description: ${value.description}
+                                            """               ${index + 1}. ${value.name}
+                                            |                      Price: $${value.price}
+                                            |                      Description: ${value.description}
                                         """.trimMargin()
                                         )
                                         println()
                                     }
+                                    println("+".repeat(60))
 
                                     when (val option = validateInput("Int", "Select a dish: ")) {
                                         in 1..dishes.size -> {
@@ -132,16 +155,20 @@ class Menu : FullPayment(), ShowOrder {
                                 3 -> {
                                     println()
                                     dishes = foodList.filter { it.value.category == Category.DRINKS }
+                                    println("+".repeat(60))
+                                    println("                        DRINKS                             ")
+                                    println()
                                     dishes.toList().forEachIndexed { index, entry ->
                                         val (key, value) = entry
                                         println(
-                                            """${index + 1}. ${value.name}
-                                            |Price: $${value.price}
-                                            |Description: ${value.description}
+                                            """               ${index + 1}. ${value.name}
+                                            |                      Price: $${value.price}
+                                            |                      Description: ${value.description}
                                         """.trimMargin()
                                         )
                                         println()
                                     }
+                                    println("+".repeat(60))
 
                                     when (val option = validateInput("Int", "Select a drink: ")) {
                                         in 1..dishes.size -> {
@@ -164,17 +191,20 @@ class Menu : FullPayment(), ShowOrder {
                                 4 -> {
                                     println()
                                     dishes = foodList.filter { it.value.category == Category.DESSERTS }
+                                    println("+".repeat(60))
+                                    println("                        DESSERTS                             ")
+                                    println()
                                     dishes.toList().forEachIndexed { index, entry ->
                                         val (key, value) = entry
                                         println(
-                                            """${index + 1}. ${value.name}
-                                            |Price: $${value.price}
-                                            |Description: ${value.description}
+                                            """               ${index + 1}. ${value.name}
+                                            |                      Price: $${value.price}
+                                            |                      Description: ${value.description}
                                         """.trimMargin()
                                         )
                                         println()
                                     }
-
+                                    println("+".repeat(60))
                                     when (val option = validateInput("Int", "Select a dessert: ")) {
                                         in 1..dishes.size -> {
                                             val dish = dishes.values.toList()[option as Int - 1]
@@ -289,21 +319,22 @@ class Menu : FullPayment(), ShowOrder {
         if (user.getOrder().isEmpty()) {
             println("Your order is empty, please select a dish")
         } else {
-            println("\t***********************************")
-            println("\t\t\t\tWELCOME TO")
-            println("\t\t\tFIRST CHOICE RESTAURANT")
-            println("\t\t\t\t${LocalDate.now()}")
-            println("\t\t\t\t${LocalTime.now().hour}:${LocalTime.now().minute}:${LocalTime.now().second}")
-            println("\t\t\tUser - ${user.getUser()}")
-            println()
-            println("\t\tDishes: ")
+            println("+".repeat(60))
+            println("                           WELCOME TO                      ")
+            println("                     FIRST CHOICE RESTAURANT               ")
+            println("                           ${LocalDate.now()}                      ")
+            println("                            ${LocalTime.now().hour}:${LocalTime.now().minute}:${LocalTime.now().second}                       ")
+            println("                          User - ${user.getUser()}                   ")
+            println("                                                           ")
+            println("                           DISHES                          ")
             user.getOrder().forEach { dish ->
-                println("\t\t\tName: ${dish.value.name}")
-                println("\t\t\tPrice: $${dish.value.price}")
-                println("\t\t\tQuantity: ${dish.value.quantity}")
+                println("                         Name: ${dish.value.name}                             ")
+                println("                         Price: $${dish.value.price}                          ")
+                println("                         Quantity: ${dish.value.quantity}                     ")
                 println()
             }
-            println("\t***********************************")
+            println("+".repeat(60))
+            println()
             sleep(3_000L)
             println()
             println("Calculate of the total of your order: ")
@@ -345,16 +376,15 @@ class Menu : FullPayment(), ShowOrder {
                 } while (!cashCorrect)
 
                 println()
-                println("Your payment is being processed")
+                paymentProcessed()
+                println()
                 creditCard.paymentCash(paymentCash.toString().toDouble(), totalBill(user))
-                sleep(3_000L)
+                sleep(1_000L)
                 println()
                 println("Your change is: ${paymentCash.toString().toDouble() - totalBill(user)}")
                 println()
                 println("**********THANKS FOR YOUR PURCHASE**********")
                 println()
-
-
                 exit = true
             }
 
@@ -363,7 +393,7 @@ class Menu : FullPayment(), ShowOrder {
                 var passCorrect = false
                 do {
                     println()
-                    print("Enter your credit card password:")
+                    print("Enter your credit card password: ")
                     val creditCardNumber = readlnOrNull() ?: ""
                     if (creditCard.creditCardPassword(creditCardNumber)) {
                         passCorrect = true
@@ -371,8 +401,9 @@ class Menu : FullPayment(), ShowOrder {
                 } while (!passCorrect)
 
                 println()
-                println("Your payment is being processed")
-                sleep(3_000L)
+                paymentProcessed()
+                sleep(1_000L)
+                println()
                 creditCard.payment(totalBill(user))
                 println()
                 println("***Your payment was successful***")
@@ -386,7 +417,7 @@ class Menu : FullPayment(), ShowOrder {
                 var passCorrect = false
                 do {
                     println()
-                    print("Enter your credit card password:")
+                    print("Enter your credit card password: ")
                     val creditCardNumber = readlnOrNull() ?: ""
                     if (creditCard.creditCardPassword(creditCardNumber)) {
                         passCorrect = true
@@ -394,8 +425,9 @@ class Menu : FullPayment(), ShowOrder {
                 } while (!passCorrect)
 
                 println()
-                println("Your payment is being processed")
-                sleep(3_000L)
+                paymentProcessed()
+                sleep(1_000L)
+                println()
                 creditCard.payment(totalBill(user))
                 println()
                 println("***Your payment was successful***")

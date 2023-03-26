@@ -5,8 +5,6 @@ suspend fun main() {
 
     val user = User()
     val userList = mutableListOf<User>()
-    val menu = Menu(
-    )
+    val menu = Menu()
     menu.showMenu(user, userList)
-
 }
