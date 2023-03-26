@@ -25,7 +25,9 @@ Este proyecto no tiene el objetivo de convertirse en una aplicación totalmente 
 
 El código a crear buscará desarrollar cada uno de los temas vistos en las sesiones que serán extraídos de las secciones de postwork y reto final, buscando la manera de aplicar lo que se explicó durante cada sesión.
 
+## 🗒️ Diagrama de flujo
 
+[Diagrama de flujo](https://docs.google.com/document/d/1T9BVWTC8A5IvC9xHZ12CrfBL2O1fcXlMCRdjov19mS4/edit?usp=share_link)
 
 <footer>
 
